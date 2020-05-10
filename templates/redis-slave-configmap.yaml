@@ -1,0 +1,45 @@
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{.Values.redis.slave.configmap.name}}
+  namespace: {{.Values.general.namespace}}
+data:
+  redis-config: |
+    # ---- General ----
+    loglevel debug
+    logfile ""
+    daemonize no
+    always-show-logo no
+    timeout 300
+    tcp-keepalive 300
+    databases 1
+    port 6379
+    # ---- security ----
+    bind 0.0.0.0
+    protected-mode yes
+    requirepass "ZPsz4L&SGh&z_)yW9kt,T"
+    rename-command CONFIG ""
+    rename-command DEBUG ""
+    # ---- persistence ----
+    # --- AOF ---
+    appendonly no
+    appendfilename "appendonly.aof"
+    appendfsync everysec
+    aof-load-truncated yes
+    aof-use-rdb-preamble yes
+    aof-rewrite-incremental-fsync yes
+    # --- RDB ---
+    save ""
+    stop-writes-on-bgsave-error yes
+    rdbcompression yes
+    rdbchecksum yes
+    dbfilename dump.rd
+    rdb-save-incremental-fsync yes
+    dir /bitnami/redis/data 
+    # ---- Replication ----
+    replicaof {{.Values.redis.master.host}} {{.Values.redis.master.service.servicePort}}
+    masterauth "ZPsz4L&SGh&z_)yW9kt,T" 
+    replica-serve-stale-data yes
+    replica-read-only yes
+...
