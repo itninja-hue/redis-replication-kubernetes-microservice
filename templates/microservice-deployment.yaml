@@ -1,0 +1,145 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{.Values.microservice.deployment.name}}
+  namespace: {{.Values.general.namespace}}
+  labels:
+    app: {{.Values.general.microserviceName}}
+    type: {{.Values.microservice.deployment.type}}
+spec:
+  selector:
+    matchLabels:
+      app: {{.Values.general.microserviceName}}
+      type: {{.Values.microservice.deployment.type}}
+  template:
+    metadata:
+      labels:
+        app: {{.Values.general.microserviceName}}
+        type: {{.Values.microservice.deployment.type}}
+    spec:
+      containers:
+      - name: {{.Values.redis.slave.deployment.containerName}}
+        image: {{.Values.redis.slave.deployment.image}}
+        command: 
+          - redis-server 
+          - /opt/bitnami/redis/mounted-etc/redis.conf
+        securityContext:
+          allowPrivilegeEscalation: false
+        resources:
+          requests:
+            memory: "100Mi"
+            cpu: 0.1
+          limits:
+            memory: "200Mi"
+            cpu: 0.1
+        volumeMounts:
+        - mountPath: /opt/bitnami/redis/mounted-etc/
+          name: config
+      - name: {{.Values.microservice.deployment.containerName}}
+        image: {{.Values.microservice.deployment.image}}
+        securityContext:
+          allowPrivilegeEscalation: false
+        resources:
+          requests:
+            memory: "200Mi"
+            cpu: 0.1
+          limits:
+            memory: "500Mi"
+            cpu: 0.3
+        env:
+        - name: APP_PORT
+          valueFrom:
+            configMapKeyRef:
+              name: {{.Values.microservice.configmap.name}}
+              key: app_port
+        - name: APP_HOST
+          valueFrom:
+            configMapKeyRef:
+              name: {{.Values.microservice.configmap.name}}
+              key: app_host
+        - name: LOG_SEVERITY
+          valueFrom:
+            configMapKeyRef:
+              name: {{.Values.microservice.configmap.name}}
+              key: log_severity        
+        - name: MASTER_REDIS_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: {{.Values.microservice.secret.name}}
+              key: master-password
+        - name: SLAVE_REDIS_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: {{.Values.microservice.secret.name}}
+              key: slave-password
+        - name: MASTER_REDIS_CONNECTION_NAME
+          valueFrom:
+            configMapKeyRef:
+              name: {{.Values.microservice.configmap.name}}
+              key: master_redis_connection_name
+        - name: MASTER_REDIS_PORT
+          valueFrom:
+            configMapKeyRef:
+              name: {{.Values.microservice.configmap.name}}
+              key: master_redis_port
+        - name: MASTER_REDIS_HOST
+          valueFrom:
+            configMapKeyRef:
+              name: {{.Values.microservice.configmap.name}}
+              key: master_redis_host
+        - name: MASTER_REDIS_DB
+          valueFrom:
+            configMapKeyRef:
+              name: {{.Values.microservice.configmap.name}}
+              key: master_redis_db
+        - name: SLAVE_REDIS_CONNECTION_NAME
+          valueFrom:
+            configMapKeyRef:
+              name: {{.Values.microservice.configmap.name}}
+              key: slave_redis_connection_name
+        - name: SLAVE_REDIS_PORT
+          valueFrom:
+            configMapKeyRef:
+              name: {{.Values.microservice.configmap.name}}
+              key: slave_redis_port
+        - name: SLAVE_REDIS_HOST
+          valueFrom:
+            configMapKeyRef:
+              name: {{.Values.microservice.configmap.name}}
+              key: slave_redis_host
+        - name: SLAVE_REDIS_DB
+          valueFrom:
+            configMapKeyRef:
+              name: {{.Values.microservice.configmap.name}}
+              key: slave_redis_db
+        - name: ELASTIC_APM_SERVER_URL
+          valueFrom:
+            configMapKeyRef:
+              name: {{.Values.apm.configmap.name}}
+              key: apm-server-host
+        - name: ELASTIC_APM_SERVICE_NAME
+          valueFrom:
+            configMapKeyRef:
+              name: {{.Values.apm.configmap.name}}
+              key: apm-service-name
+        - name: ELASTIC_APM_LOG_LEVEL
+          valueFrom:
+            configMapKeyRef:
+              name: {{.Values.apm.configmap.name}}
+              key: apm-log-level
+        - name: ELASTIC_APM_SECRET_TOKEN
+          valueFrom:
+            secretKeyRef:
+              name: {{.Values.apm.secrets.name}}
+              key: apm-secret-token
+      volumes:
+        - name: config
+          configMap:
+            name: {{.Values.redis.slave.configmap.name}}
+            items:
+            - key: redis-config
+              path: redis.conf        
+      imagePullSecrets:
+      - name: regcred
+...
