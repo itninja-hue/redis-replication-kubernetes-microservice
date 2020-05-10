@@ -1,0 +1,55 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{.Values.redis.master.deployment.name}}
+  namespace: {{.Values.general.namespace}}
+  labels:
+    app: {{.Values.general.microserviceName}}
+    type: {{.Values.redis.master.deployment.type}}
+spec:
+  replicas: {{.Values.redis.master.deployment.scale}}
+  selector:
+    matchLabels:
+      app: {{.Values.general.microserviceName}}
+      type: {{.Values.redis.master.deployment.type}}
+  template:
+    metadata:
+      labels:
+        app: {{.Values.general.microserviceName}}
+        type: {{.Values.redis.master.deployment.type}}
+    spec:
+      securityContext:
+        runAsUser: 1001
+        fsGroup: 1001
+      containers:
+      - name: {{.Values.redis.master.deployment.containerName}}
+        image: {{.Values.redis.master.deployment.image}}
+        command: 
+          - redis-server 
+          - /opt/bitnami/redis/mounted-etc/redis.conf
+        resources:
+          requests:
+            memory: "100Mi"
+            cpu: 0.1
+          limits:
+            memory: "200Mi"
+            cpu: 0.1
+        volumeMounts:
+        - mountPath: /opt/bitnami/redis/mounted-etc/
+          name: config
+        - mountPath: /bitnami/redis/data
+          name: data
+        securityContext:
+          allowPrivilegeEscalation: false
+      volumes:
+        - name: config
+          configMap:
+            name: {{.Values.redis.master.configmap.name}}
+            items:
+            - key: redis-config
+              path: redis.conf
+        - name: data
+          persistentVolumeClaim:
+            claimName: {{.Values.redis.master.persistentVolumeClaim.name}}
+...

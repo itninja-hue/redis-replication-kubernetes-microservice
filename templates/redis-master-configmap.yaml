@@ -1,0 +1,42 @@
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{.Values.redis.master.configmap.name}}
+  namespace: {{.Values.general.namespace}}
+data: 
+  redis-config: |
+    # ---- General ----
+    loglevel debug
+    logfile "" 
+    daemonize no
+    always-show-logo no
+    timeout 300 
+    tcp-keepalive 300
+    databases 1
+    port 6376
+    # ---- security ----
+    bind 0.0.0.0
+    protected-mode yes
+    requirepass "ZPsz4L&SGh&z_)yW9kt,T"
+    rename-command CONFIG ""
+    rename-command DEBUG ""
+    # ---- persistence ----
+    # --- AOF ---
+    appendonly yes
+    appendfilename "appendonly.aof"
+    appendfsync everysec
+    aof-load-truncated yes
+    aof-use-rdb-preamble yes
+    aof-rewrite-incremental-fsync yes
+    # --- RDB ----
+    save 900 1
+    save 300 10
+    save 60 10000
+    stop-writes-on-bgsave-error yes
+    rdbcompression yes
+    rdbchecksum yes
+    dbfilename dump.rd
+    rdb-save-incremental-fsync yes
+    dir /bitnami/redis/data
+...
