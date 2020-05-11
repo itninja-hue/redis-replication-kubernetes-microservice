@@ -14,15 +14,17 @@ helm  install ./ -f values.yaml --namespace microservice-redis --name microservi
 ```
 # Anatomy
 
+All redis configuration is built around [bitnami/redis](https://hub.docker.com/r/bitnami/redis/)
+
 ## Redis-slave 
 * Redis slave will be deployed as a side car (Read Only) to your main contianer, and will automaticly connects to redis master.
 * Redis slave will not have persistence since it will serve as a replicas to master, if you wish to enable it you can edit [redis-slave-configmap]()
-* you can edit Redis slave configuration in [redis-slave-configmap]() or in [values.yaml]()
+* you can edit Redis slave configuration in [redis-slave-configmap](https://github.com/itninja-hue/redis-kubernetes-replication-microservice/blob/master/templates/redis-slave-configmap.yaml) or in [values.yaml](https://github.com/itninja-hue/redis-kubernetes-replication-microservice/blob/master/values.yaml)
 
 ## Redis-master
 * Redis master will be deployed as an independent deployment (Write Only), You should write to it from you main miscroservice container.
 * Redis master will be persisted through a pvc. AOF and RDB are enables. More details in [redis-master-deployment.yaml]()
-* you can edit Redis master configuration in [redis-master-configmap]() or in [values.yaml]()
+* you can edit Redis master configuration in [redis-master-configmap](https://github.com/itninja-hue/redis-kubernetes-replication-microservice/blob/master/templates/redis-master-configmap.yaml) or in [values.yaml](https://github.com/itninja-hue/redis-kubernetes-replication-microservice/blob/master/values.yaml)
 
 
 ## Main Microservice Conatiner
