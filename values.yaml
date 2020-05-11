@@ -1,10 +1,8 @@
 ---
 general:
-  namespace: dev-microservice-redis
+  namespace: microservice-redis
   microserviceName: microservice-redis
   appPort: 9000
-  appHost: 0.0.0.0
-  log_severity: info
 redis:
   master:
     password: "ZPsz4L&SGh&z_)yW9kt,T"
@@ -22,7 +20,7 @@ redis:
       name: redis-master-service
       servicePort: 6376
       serviceTargetPort: 6376
-    host: redis-master-service.dev-microservice-geocaching.svc.cluster.local
+    host: redis-master-service.microservice-redis.svc.cluster.local
     pvc:
       name: redis-master-pvc
       storage: 1Gi
@@ -39,31 +37,20 @@ microservice:
   secret:
     name: microservice-secret
   deployment:
-    name: geocaching-deployment
+    name: microservice-deployment
     containerName: microservice
     image: IMAGE
-    type: geocaching-redis-sidecar
+    type: microservice-redis-sidecar
   configmap:
     name: microservice-configmap
   service:
     name: microservice-service
     servicePort: 80
-  ingress:
-    ingressName: microservice-ingress
-    host: host.example.com
   autoscaler:
     name: autoscaler-microservice
     minReplicas: 2
     maxReplicas: 3
     targetCPUUtilizationPercentage: 70
-apm:
-  secrets:
-    name: apm-secret-token
-    token: APM_TOKEN
-  configmap:
-    name: apm-configmap
-    host: APM_HOST
-    logLevel: trace
 privateDockerRegistry:
   dockerconfigjson: dockerconfigjsonBASE64ENC
 ...
