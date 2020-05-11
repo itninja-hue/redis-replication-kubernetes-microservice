@@ -47,22 +47,7 @@ spec:
           limits:
             memory: "500Mi"
             cpu: 0.3
-        env:
-        - name: APP_PORT
-          valueFrom:
-            configMapKeyRef:
-              name: {{.Values.microservice.configmap.name}}
-              key: app_port
-        - name: APP_HOST
-          valueFrom:
-            configMapKeyRef:
-              name: {{.Values.microservice.configmap.name}}
-              key: app_host
-        - name: LOG_SEVERITY
-          valueFrom:
-            configMapKeyRef:
-              name: {{.Values.microservice.configmap.name}}
-              key: log_severity        
+        env:       
         - name: MASTER_REDIS_PASSWORD
           valueFrom:
             secretKeyRef:
@@ -113,26 +98,6 @@ spec:
             configMapKeyRef:
               name: {{.Values.microservice.configmap.name}}
               key: slave_redis_db
-        - name: ELASTIC_APM_SERVER_URL
-          valueFrom:
-            configMapKeyRef:
-              name: {{.Values.apm.configmap.name}}
-              key: apm-server-host
-        - name: ELASTIC_APM_SERVICE_NAME
-          valueFrom:
-            configMapKeyRef:
-              name: {{.Values.apm.configmap.name}}
-              key: apm-service-name
-        - name: ELASTIC_APM_LOG_LEVEL
-          valueFrom:
-            configMapKeyRef:
-              name: {{.Values.apm.configmap.name}}
-              key: apm-log-level
-        - name: ELASTIC_APM_SECRET_TOKEN
-          valueFrom:
-            secretKeyRef:
-              name: {{.Values.apm.secrets.name}}
-              key: apm-secret-token
       volumes:
         - name: config
           configMap:
