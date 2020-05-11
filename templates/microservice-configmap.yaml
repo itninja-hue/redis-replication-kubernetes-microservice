@@ -5,9 +5,6 @@ metadata:
   name: {{.Values.microservice.configmap.name}}
   namespace: {{.Values.general.namespace}}
 data:
-  app_port: "{{.Values.general.appPort}}"
-  app_host: "{{.Values.general.appHost}}"
-  log_severity: "{{.Values.general.log_severity}}"
   master_redis_connection_name: master
   master_redis_port: "{{.Values.redis.master.service.servicePort}}"
   master_redis_host: {{.Values.redis.master.host}}
