@@ -2,32 +2,6 @@
 apiVersion: networking.k8s.io/v1
 kind: NetworkPolicy
 metadata:
-  name: microservice-allow-in-9000
-  namespace: {{.Values.general.namespace}}
-spec:
-  podSelector:
-    matchLabels:
-      app: {{.Values.general.microserviceName}}
-      type: {{.Values.microservice.deployment.type}}
-  policyTypes:
-  - Ingress
-  ingress:
-  - from:
-    - namespaceSelector:
-        matchLabels:
-          app.kubernetes.io/name: ingress-nginx
-          app.kubernetes.io/part-of: ingress-nginx
-      podSelector:
-        matchLabels:
-          app.kubernetes.io/name: ingress-nginx
-          app.kubernetes.io/part-of: ingress-nginx
-    ports:
-    - protocol: TCP
-      port: {{.Values.general.appPort}}
----
-apiVersion: networking.k8s.io/v1
-kind: NetworkPolicy
-metadata:
   name: microservice-allow-out-53
   namespace: {{.Values.general.namespace}}
 spec:
