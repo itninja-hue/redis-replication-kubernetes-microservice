@@ -1,8 +1,8 @@
 # redis-replication-kubernetes-microservice
 In some use cases, a redis cluster or redis sentinel is considered as over enginering, over resource consumption, 
 and a redis replication can perfectly fit.
-Espesially in a microservice context, where one should be 100% independent from others, having its life cycle 
-and requirments and one of those is redis. 
+Espesially in a microservice context, where one should be 100% independent, having its life cycle 
+and requirments. 
 
 # Getting started
 ## Prerequisites
